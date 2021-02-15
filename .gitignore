@@ -1,0 +1,32 @@
+# Bytecode and compiled artifacts
+*.pod
+*.class
+*.pyc
+__pycache__/
+.pytest_cache/
+*.o
+*.so
+*.dylib
+*.a
+
+# Build directories
+build/
+bin/
+dist/
+target/
+.gradle/
+
+# Runtime and data files
+*.wal
+*.snap
+*.log
+*.pid
+data/
+logs/
+
+# IDE and OS metadata
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
