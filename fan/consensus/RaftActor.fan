@@ -28,6 +28,9 @@ class RaftStateMachine
   Str:Int nextIndexMap := Str:Int[:]
   Str:Int matchIndexMap := Str:Int[:]
 
+  // Linearizable ReadIndex tracking
+  private Int:PendingRead pendingReads := Int:PendingRead[:]
+
   // Election timing
   Int minElectionTimeoutMillis
   Int maxElectionTimeoutMillis
@@ -393,6 +396,52 @@ class RaftStateMachine
   }
 
   **
+  ** Initiate linearizable ReadIndex query (Section 6.4).
+  ** Records current commitIndex and requests quorum confirmation.
+  **
+  Int startReadIndex(Int reqId)
+  {
+    if (role != RaftRole.leader) return -1
+
+    read := PendingRead(reqId, commitIndex)
+    read.acks[selfId.id] = true
+    if (read.acks.size >= quorumSize)
+    {
+      read.isFulfilled = true
+    }
+    pendingReads[reqId] = read
+    return commitIndex
+  }
+
+  **
+  ** Record heartbeat acknowledgment from peer for an active ReadIndex request.
+  ** Returns true when quorum acknowledgment is achieved.
+  **
+  Bool recordReadHeartbeatAck(Int reqId, NodeId fromPeer)
+  {
+    read := pendingReads[reqId]
+    if (read == null || read.isFulfilled) return false
+
+    read.acks[fromPeer.id] = true
+    if (read.acks.size >= quorumSize)
+    {
+      read.isFulfilled = true
+      return true
+    }
+    return false
+  }
+
+  **
+  ** Lookup status of a pending ReadIndex request.
+  **
+  Int getReadIndex(Int reqId)
+  {
+    read := pendingReads[reqId]
+    if (read == null || !read.isFulfilled) return -1
+    return read.readIndex
+  }
+
+  **
   ** Section 5.4.1: Candidate log completeness check.
   ** Receiver denies vote if its own log is more up-to-date than candidate log.
   **
@@ -406,5 +455,19 @@ class RaftStateMachine
       return candidateLastTerm > myLastTerm
     }
     return candidateLastIndex >= myLastIndex
+  }
+}
+
+internal class PendingRead
+{
+  Int reqId
+  Int readIndex
+  Str:Bool acks := Str:Bool[:]
+  Bool isFulfilled := false
+
+  new make(Int reqId, Int readIndex)
+  {
+    this.reqId     = reqId
+    this.readIndex = readIndex
   }
 }
