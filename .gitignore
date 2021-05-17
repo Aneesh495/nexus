@@ -21,8 +21,8 @@ target/
 *.snap
 *.log
 *.pid
-data/
-logs/
+/data/
+/logs/
 
 # IDE and OS metadata
 .DS_Store
