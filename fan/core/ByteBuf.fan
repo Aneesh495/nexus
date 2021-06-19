@@ -483,6 +483,24 @@ class ByteBuf
   }
 
   **
+  ** Get byte at absolute index in backing buffer.
+  **
+  Int getByte(Int index)
+  {
+    if (index < 0 || index >= bytes.size) throw IndexErr("Index out of range: $index")
+    return bytes[index]
+  }
+
+  **
+  ** Set byte at absolute index in backing buffer.
+  **
+  Void setByte(Int index, Int val)
+  {
+    if (index < 0 || index >= bytes.size) throw IndexErr("Index out of range: $index")
+    bytes[index] = val.and(0xFF)
+  }
+
+  **
   ** Slice buffer from readerIndex for given length.
   **
   ByteBuf slice(Int length := readableBytes)
