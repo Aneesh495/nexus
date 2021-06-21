@@ -469,7 +469,22 @@ class ByteBuf
       buf.write(raw[i])
     }
     buf.flip
-    return buf.readAllStr
+    return buf.readAllStr(false)
+  }
+
+  **
+  ** Read raw UTF-8 string of the specified byte length without length prefix.
+  **
+  Str readUtf8Bytes(Int len := readableBytes)
+  {
+    raw := readBytes(len)
+    buf := Buf(len)
+    for (i := 0; i < len; ++i)
+    {
+      buf.write(raw[i])
+    }
+    buf.flip
+    return buf.readAllStr(false)
   }
 
   **

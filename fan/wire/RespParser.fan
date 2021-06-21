@@ -59,7 +59,7 @@ class RespParser
         strBuf := Buf(len)
         for (i := 0; i < rawBytes.size; ++i)
           strBuf.write(rawBytes[i])
-        return RespValue.bulkString(strBuf.flip.readAllStr)
+        return RespValue.bulkString(strBuf.flip.readAllStr(false))
 
       case '*': // Array
         line := readLine(buf)
@@ -144,6 +144,6 @@ class RespParser
     for (i := 0; i < rawBytes.size; ++i)
       lineBuf.write(rawBytes[i])
 
-    return lineBuf.flip.readAllStr
+    return lineBuf.flip.readAllStr(false)
   }
 }
