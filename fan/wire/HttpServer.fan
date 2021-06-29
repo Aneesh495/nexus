@@ -137,6 +137,12 @@ class HttpRouter
   {
     path := req.path
 
+    if (path == "/" || path == "/dashboard")
+    {
+      html := DashboardAssets.renderDashboardHtml("nexus-grid-cluster", clusterNodes)
+      return HttpResponse.ok(html, "text/html; charset=utf-8")
+    }
+
     if (path == "/metrics")
     {
       metricsText := PrometheusExporter.renderMetrics(
