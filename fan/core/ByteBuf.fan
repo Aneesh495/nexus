@@ -160,6 +160,11 @@ class ByteBuf
   }
 
   **
+  ** Alias for compact(): discards already-read bytes.
+  **
+  This discardReadBytes() { compact }
+
+  **
   ** Clear reader and writer indices without zeroing memory.
   **
   This clear()
