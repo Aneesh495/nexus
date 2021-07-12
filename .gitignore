@@ -8,6 +8,7 @@ __pycache__/
 *.so
 *.dylib
 *.a
+test_runner
 
 # Build directories
 build/
